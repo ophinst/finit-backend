@@ -11,7 +11,7 @@ jobs:
     name: Deploy to Cloud Run
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/finit-docker/${{ secrets.APPLICATION }}
+      IMAGE_NAME: us-central1-docker.pkg.dev/glossy-attic-407914/finit--docker
       DB_NAME: ${{ secrets.DB_NAME }}
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_PORT: ${{ secrets.DB_PORT }}
