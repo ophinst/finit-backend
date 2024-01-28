@@ -18,7 +18,6 @@ jobs:
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      PORT: ${{ secrets.PORT }}
       
     steps:
       - name: Login to Google Cloud
@@ -51,4 +50,4 @@ jobs:
               --platform managed \
               --allow-unauthenticated \
               --port 8080 \
-              --set-env-vars="DB_NAME=${{ secrets.DB_NAME }}, DB_USERNAME=${{ secrets.DB_USERNAME }}, DB_PASSWORD=${{ secrets.DB_PASSWORD }}, DB_HOST=${{ secrets.DB_HOST }}, JWT_SECRET=${{ secrets.JWT_SECRET }}, PORT=${{ secrets.PORT }}"
+              --set-env-vars="DB_NAME=${{ secrets.DB_NAME }}, DB_USERNAME=${{ secrets.DB_USERNAME }}, DB_PASSWORD=${{ secrets.DB_PASSWORD }}, DB_HOST=${{ secrets.DB_HOST }}, JWT_SECRET=${{ secrets.JWT_SECRET }}"
