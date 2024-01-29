@@ -2,6 +2,7 @@ import * as jwt from "jsonwebtoken";
 import { Request, Response, NextFunction} from "express";
 import { Env } from "../config/env-loader";
 import Token from "../models/token.model";
+import { nanoid } from "nanoid";
 
 class TokenMiddleware {
 	async RefreshToken (req: Request, res: Response, next:NextFunction, expiredToken): Promise<void> {
@@ -18,7 +19,6 @@ class TokenMiddleware {
 		});
 
 		try {
-
 			const oldToken = oldTokenInstance.get("token");
 			
 			jwt.verify(oldToken, Env.JWT_SECRET);
@@ -27,7 +27,11 @@ class TokenMiddleware {
 				expiresIn: "7d"
 			});
 
+			const id = nanoid(10);
+			const tokenId = "tkn-" + id;
+
 			await Token.update({
+				tokenId: tokenId,
 				token: newToken
 			}, {
 				where: {
