@@ -9,9 +9,8 @@ class Token extends Model {
 
 Token.init({
 	tokenId: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.STRING,
 		primaryKey: true,
-		autoIncrement: true,
 	},
 	uid: {
 		type: DataTypes.STRING,

@@ -18,9 +18,8 @@ class FoundItem extends Model {
 
 FoundItem.init({
 	foundId: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.STRING,
 		primaryKey: true,
-		autoIncrement: true,
 	},
 	uid: {
 		type: DataTypes.STRING,

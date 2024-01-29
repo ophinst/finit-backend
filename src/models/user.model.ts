@@ -15,7 +15,7 @@ class User extends Model {
 User.init({
 	uid: {
 		type: DataTypes.STRING,
-		unique: true
+		primaryKey: true,
 	},
 	name: {
 		type: DataTypes.STRING,
@@ -46,5 +46,4 @@ User.init({
 	modelName: "user",
 });
 
-// export { User };
 export default User;
