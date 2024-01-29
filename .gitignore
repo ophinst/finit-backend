@@ -18,6 +18,5 @@ tsconfig.tsbuildinfo
 .idea/
 
 # npm package files
-package-lock.json
 npm-debug.log
 
