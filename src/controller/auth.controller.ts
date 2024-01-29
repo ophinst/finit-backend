@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import * as nanoid from "nanoid";
-import User from "../models/user.model";
+import { User } from "../models/user.model";
 import Token from "../models/token.model";
 import { Env } from "../config/env-loader";
+import { nanoid } from "nanoid";
 
 class AuthController {
 	async Register(req: Request, res: Response): Promise<void> { 
@@ -48,7 +48,7 @@ class AuthController {
 			const salt = await bcrypt.genSalt();
 			const hashedPassword = await bcrypt.hash(password, salt);
 
-			const id = nanoid.nanoid(10);
+			const id = nanoid(10);
 			const uid = "fin-" + id;
 
 			await User.create({
@@ -110,7 +110,11 @@ class AuthController {
 				expiresIn: "7d"
 			});
 
+			const id = nanoid(10);
+			const tokenId = "tkn-" + id;
+
 			await Token.create({
+				tokenId: tokenId,
 				uid: uid,
 				token: refreshToken,
 			});
@@ -118,7 +122,7 @@ class AuthController {
 			res.cookie("token", token, {
 				httpOnly: true,
 				sameSite: true,
-				maxAge: 24 * 60 * 60 * 1000,
+				maxAge: 7 * 24 * 60 * 60 * 1000,
 				secure: false
 			});
 

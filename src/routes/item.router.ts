@@ -1,8 +1,12 @@
 import * as express from "express";
 import ItemController from "../controller/item.controller";
+import AuthMiddleware from "../middleware/auth.middleware";
 
-const itemRouter = express.Router();
+const ItemRouter = express.Router();
 
-itemRouter.post("/found", ItemController.CreateFoundItem);
+ItemRouter.post("/found", AuthMiddleware.VerifyToken, ItemController.CreateFoundItem);
 
-export default itemRouter;
+ItemRouter.get("/found", ItemController.GetFoundItems);
+ItemRouter.get("/found/:id", ItemController.GetFoundItemById);
+
+export default ItemRouter;
