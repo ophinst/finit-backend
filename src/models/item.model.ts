@@ -1,9 +1,9 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/db";
-import User from "./user.model";
+import { User } from "./user.model";
 
 class FoundItem extends Model {
-	public foundId!: number;
+	public foundId!: string;
 	public uid!: string;
 	public itemName!: string;
 	public itemDescription!: string;
@@ -14,6 +14,7 @@ class FoundItem extends Model {
 	public longitude?: string;
 	public locationDetail?: string;
 	public status!: boolean;
+	public owner!: User;
 }
 
 FoundItem.init({
@@ -50,9 +51,11 @@ FoundItem.init({
 	},
 	latitude: {
 		type: DataTypes.STRING,
+		allowNull: false
 	},
 	longitude: {
 		type: DataTypes.STRING,
+		allowNull: false
 	},
 	locationDetail: {
 		type: DataTypes.STRING,

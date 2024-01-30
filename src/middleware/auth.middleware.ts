@@ -1,7 +1,7 @@
 import * as jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { Env } from "../config/env-loader";
-import User from "../models/user.model";
+import { User } from "../models/user.model";
 import tokenMiddleware from "./token.middleware";
 
 class AuthMiddleware {
@@ -63,5 +63,5 @@ class AuthMiddleware {
 	}
 }
 
-export  default new AuthMiddleware;
+export default new AuthMiddleware;
 

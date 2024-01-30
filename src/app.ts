@@ -2,9 +2,9 @@ import * as cors from "cors";
 import * as express from "express";
 import * as morgan from "morgan";
 import * as cookieParser from "cookie-parser";
-import authRouter from "./routes/auth.router";
-import userRouter from "./routes/user.router";
-import itemRouter from "./routes/item.router";
+import AuthRouter from "./routes/auth.router";
+import UserRouter from "./routes/user.router";
+import ItemRouter from "./routes/item.router";
 import { Env } from "./config/env-loader";
 
 const app = express(); 
@@ -22,14 +22,14 @@ app.disable("x-powered-by");
 
 app.use(`${globalApiPrefix}/`, 
 	express.Router()
-		.use("/auth", authRouter)
-		.use(userRouter)
-		.use(itemRouter)
+		.use("/auth", AuthRouter)
+		.use(UserRouter)
+		.use(ItemRouter)
 );
 
 app.use("/", (req, res) => {
 	console.log("Server is listening");
-	res.send("It's working bruh!");
+	res.send("It's working bruh, but you will find nothing here!");
 });
 
 const port = Env.PORT;
