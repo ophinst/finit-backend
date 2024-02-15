@@ -7,7 +7,7 @@ import { Env } from "../config/env-loader";
 import { nanoid } from "nanoid";
 
 class AuthController {
-	async Register(req: Request, res: Response): Promise<void> { 
+	async Register(req: Request, res: Response): Promise<Response> { 
 		try {
 			const { name, email, password, confirmPassword } = req.body;
 			if (!name || !email || !password || !confirmPassword) {
@@ -21,7 +21,7 @@ class AuthController {
 				where: { email } 
 			});
 			if (existUser) {
-				res.status(400).json({
+				return res.status(400).json({
 					success: false, 
 					message: `User with ${email} already exist` 
 				});

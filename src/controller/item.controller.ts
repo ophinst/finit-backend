@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 FoundItem.belongsTo(User, { foreignKey: "uid", as: "owner" });
 User.hasMany(FoundItem, { foreignKey: "uid", as: "items" });
 class ItemController {
-	async CreateFoundItem(req: Request, res :Response) : Promise<void> {
+	async CreateFoundItem(req: Request, res :Response) : Promise<Response> {
 		try {
 			const { 
 				itemName, 
@@ -21,7 +21,7 @@ class ItemController {
 			} = req.body;
 
 			if (!itemName || !itemDescription || !foundDate || !foundTime || !category || !latitude || !longitude || !locationDetail) {
-				res.status(400).json({ 
+				return res.status(400).json({ 
 					error: "Please provide all required fields" 
 				});
 			}
@@ -47,19 +47,19 @@ class ItemController {
 				longitude: longitude,
 				locationDetail: locationDetail,
 			});
-			res.status(201).json({
+			return res.status(201).json({
 				message: "Item created successfully",
 				data: foundItem
 			});
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({
+			return res.status(500).json({
 				message: "Internal server error"
 			});
 		}
 	}
 
-	async GetFoundItems(req: Request, res :Response) : Promise<void> {
+	async GetFoundItems(req: Request, res :Response) : Promise<Response> {
 		try {
 			const category = req.query.category as string;
 			
@@ -102,11 +102,11 @@ class ItemController {
 			const foundItems = await FoundItem.findAll(filter);
 	
 			if (!foundItems) {
-				res.status(404).json({
+				return res.status(404).json({
 					message: "No items found"
 				});
 			}
-			res.status(200).json({
+			return res.status(200).json({
 				message: "Found items retrieved successfully",
 				data: foundItems.map(item => ({
 					...item.get(),
@@ -115,13 +115,13 @@ class ItemController {
 			});
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({
+			return res.status(500).json({
 				message: "Internal server error"
 			});
 		}
 	}
 
-	async GetFoundItemById(req: Request, res :Response) : Promise<void> {
+	async GetFoundItemById(req: Request, res :Response) : Promise<Response> {
 		try {
 			const id = req.params.id;
 			const foundItem = await FoundItem.findOne({
@@ -146,11 +146,11 @@ class ItemController {
 			});
 
 			if (!foundItem) {
-				res.status(404).json({
+				return res.status(404).json({
 					message: "Item not found"
 				});
 			}
-			res.status(200).json({
+			return res.status(200).json({
 				message: "Item retrieved successfully",
 				data: {
 					...foundItem.get(),
@@ -160,7 +160,7 @@ class ItemController {
 		}
 		catch (error) {
 			console.error(error);
-			res.status(500).json({
+			return res.status(500).json({
 				message: "Internal server error"
 			});
 		}

@@ -5,7 +5,7 @@ import Token from "../models/token.model";
 import { nanoid } from "nanoid";
 
 class TokenMiddleware {
-	async RefreshToken (req: Request, res: Response, next:NextFunction, expiredToken): Promise<void> {
+	async RefreshToken (req: Request, res: Response, next:NextFunction, expiredToken): Promise<Response> {
 		const decoded = jwt.decode(expiredToken);
 		if (typeof decoded === "object" && decoded !== null && "uid" in decoded) {
 			req.uid = decoded.uid;
@@ -48,20 +48,20 @@ class TokenMiddleware {
 			next();
 		} catch (error) {
 			if (error instanceof jwt.TokenExpiredError) {
-				res.status(401).json({
+				return res.status(401).json({
 					success: false,
 					message: "Your session expired, please relogin!"
 				});
 			
 			} else if (!oldTokenInstance) {
-				res.status(404).json({
+				return res.status(404).json({
 					success: false,
 					message: "Can't find token, please relogin!"
 				});
 			} 
 			else{
 				console.log(error);
-				res.status(500).json({
+				return res.status(500).json({
 					success: false,
 					message: "Internal server error!"
 				});

@@ -2,15 +2,15 @@ import { User } from "../models/user.model";
 import { Request, Response } from "express";
 
 class UserController {
-	async GetUser(req: Request, res: Response): Promise<void> {
+	async GetUser(req: Request, res: Response): Promise<Response> {
 		try {
 			const users = await User.findAll({
 				attributes: ["name", "email"]
 			});
-			res.json(users);
+			return res.json(users);
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({ error: "An error occurred while fetching users." });
+			return res.status(500).json({ error: "An error occurred while fetching users." });
 		}
 	}
 }

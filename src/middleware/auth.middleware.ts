@@ -6,12 +6,12 @@ import tokenMiddleware from "./token.middleware";
 
 class AuthMiddleware {
 	/** Verify Token */
-	async VerifyToken (req: Request, res: Response, next: NextFunction): Promise<void> {
+	async VerifyToken (req: Request, res: Response, next: NextFunction): Promise<Response> {
 		const header = req.headers["authorization"];
 		const token = header && header.split(" ")[1];
 	
 		if (!token) {
-			res.status(401).json({
+			return res.status(401).json({
 				success: false,
 				message: "Missing Token!"
 			});
@@ -24,12 +24,12 @@ class AuthMiddleware {
 			if (error instanceof jwt.TokenExpiredError) {
 				tokenMiddleware.RefreshToken(req, res, next, token);
 			} else if (error instanceof jwt.JsonWebTokenError) {
-				res.status(403).json({
+				return res.status(403).json({
 					success: false,
 					message: "Invalid token!"
 				});
 			} else {
-				res.status(500).json({
+				return res.status(500).json({
 					success: false,
 					message: "Server error!"
 				});
@@ -38,7 +38,7 @@ class AuthMiddleware {
 	}
 
 	/** Verify User */
-	async verifyUser (req: Request, res: Response, next: NextFunction): Promise<void> {
+	async verifyUser (req: Request, res: Response, next: NextFunction): Promise<Response> {
 		try {
 			const email = req.method === "GET" ? req.query.email : req.body.email;
 			const user = await User.findOne({
@@ -47,7 +47,7 @@ class AuthMiddleware {
 				}
 			});
 			if (!user) {
-				res.status(404).json({
+				return res.status(404).json({
 					success: false,
 					message: "Can't find Email!"
 				});
@@ -55,7 +55,7 @@ class AuthMiddleware {
 			next();
 		} catch (err) {
 			console.log(err);
-			res.status(404).json({
+			return res.status(404).json({
 				success: false,
 				message: err
 			});
