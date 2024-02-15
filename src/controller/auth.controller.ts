@@ -75,7 +75,7 @@ class AuthController {
 		}
 	}
 
-	async Login(req: Request, res: Response): Promise<void> {
+	async Login(req: Request, res: Response): Promise<Response> {
 		try {
 			const { email, password } = req.body;
 
@@ -84,11 +84,10 @@ class AuthController {
 			});
 			
 			if (!user) {
-				res.status(401).json({
+				return res.status(401).json({
 					success: false,
 					message: "User not registered"
 				});
-				return;
 			}
 
 			const uid = user.uid;
@@ -96,7 +95,7 @@ class AuthController {
 
 			const isMatch = await bcrypt.compare(password, user.password);
 			if (!isMatch) {
-				res.status(401).json({
+				return res.status(401).json({
 					success: false,
 					message: "Invalid password"
 				});
@@ -126,7 +125,7 @@ class AuthController {
 				secure: false
 			});
 
-			res.status(200).json({
+			return res.status(200).json({
 				success: true,
 				message: "Login successful",
 				data: {
@@ -137,56 +136,55 @@ class AuthController {
 			});
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({
+			return res.status(500).json({
 				success: false,
 				message: "Internal server error"
 			});
 		}
 	}
-
-	async Logout(req: Request, res: Response): Promise<void> { 
-		try {
+	
+	async Logout(req: Request, res: Response): Promise<Response> { 
+		try {			
 			const token = req.cookies.token;
-
 			if (!token) {
-				res.status(204);
+				return res.status(204).json();
 			}
 
 			const decoded = jwt.decode(token);
-
+			
 			if (typeof decoded === "object" && decoded !== null && "uid" in decoded) {
 				req.uid = decoded.uid;
 			}
-
+			
 			const user = await User.findOne({
 				where: {
 					uid: req.uid
 				}
 			});
-
+			
 			if (!user) {
-				res.status(401).json({
+				return res.status(401).json({
 					success: false,
 					message: "User not found"
 				});
 			}
-
+			
 			await Token.destroy({
 				where: {
 					uid: req.uid
 				}
 			});
-
+			
 			res.clearCookie("token");
-
-			res.status(200).json({
+			
+			return res.status(200).json({
 				success: true,
 				message: "Logout successful"
 			});
-
+			
 		} catch (error) {
 			console.log(error);
-			res.status(500).json({
+			return res.status(500).json({
 				success: false,
 				message: "Internal server error"
 			});
