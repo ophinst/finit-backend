@@ -132,6 +132,7 @@ class AuthController {
 					uid,
 					name,
 					email,
+					token
 				}
 			});
 		} catch (error) {
