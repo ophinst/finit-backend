@@ -174,10 +174,7 @@ class ItemController {
 	async CreateLostItem(req: Request, res: Response): Promise<Response> {
 		const storage = new Storage({
 			projectId: Env.GCP_PROJECT_ID,
-			credentials: {
-				client_email: Env.GCP_EMAIL,
-				private_key: Env.GCP_KEY
-			}
+			credentials: JSON.parse(Env.GCP_KEY)
 		});
 		const bucket = storage.bucket(Env.GCP_BUCKET_NAME);
 	
