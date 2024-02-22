@@ -20,6 +20,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GCP_KEY: ${{ secrets.GCP_KEY }}
+      GCP_BUCKET_NAME: ${{ secrets.GCP_BUCKET_NAME }}
       
     steps:
       - name: Login to Google Cloud
@@ -52,4 +53,4 @@ jobs:
               --platform managed \
               --allow-unauthenticated \
               --port 8080 \
-              --set-env-vars="DB_NAME=${{ secrets.DB_NAME }}, DB_USERNAME=${{ secrets.DB_USERNAME }}, DB_PASSWORD=${{ secrets.DB_PASSWORD }}, DB_HOST=${{ secrets.DB_HOST }}, DB_PORT=${{ secrets.DB_PORT }}, JWT_SECRET=${{ secrets.JWT_SECRET }}, GCP_KEY=${{ secrets.GCP_KEY }}"
+              --set-env-vars="DB_NAME=${{ secrets.DB_NAME }}, DB_USERNAME=${{ secrets.DB_USERNAME }}, DB_PASSWORD=${{ secrets.DB_PASSWORD }}, DB_HOST=${{ secrets.DB_HOST }}, DB_PORT=${{ secrets.DB_PORT }}, JWT_SECRET=${{ secrets.JWT_SECRET }}, GCP_KEY=${{ secrets.GCP_KEY }}, GCP_BUCKET_NAME=${{ secrets.GCP_BUCKET_NAME }}"
