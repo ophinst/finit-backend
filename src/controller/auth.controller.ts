@@ -27,19 +27,19 @@ class AuthController {
 				});
 			}
 			if (!email.includes("@")) {
-				res.status(400).json({
+				return res.status(400).json({
 					success: false,
 					message: "Email format is invalid!"
 				});
 			}
 			if (password.length < 8) {
-				res.status(400).json({
+				return res.status(400).json({
 					success: false,
 					message: "Password must be at least 8 characters!"
 				});
 			}
 			if (password !== confirmPassword) {
-				res.status(403).json({
+				return res.status(403).json({
 					success: false,
 					message: "Password and confirm password don't match!"
 				});
@@ -57,7 +57,7 @@ class AuthController {
 				email: email,
 				password: hashedPassword,
 			});
-			res.status(201).json({
+			return res.status(201).json({
 				success: true,
 				message: "User registered successfully",
 				data: {
@@ -68,7 +68,7 @@ class AuthController {
 			
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({
+			return res.status(500).json({
 				success: false,
 				message: "Internal server error"
 			});
