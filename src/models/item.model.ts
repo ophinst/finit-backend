@@ -44,7 +44,8 @@ FoundItem.init({
 		references: {
 			model: User,
 			key: "uid",
-		}
+		},
+		allowNull: false,
 	},
 	itemName: {
 		type: DataTypes.STRING,
@@ -96,7 +97,8 @@ LostItem.init({
 		references: {
 			model: User,
 			key: "uid",
-		}
+		},
+		allowNull: false,
 	},
 	itemName: {
 		type: DataTypes.STRING,

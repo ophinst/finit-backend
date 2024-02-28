@@ -19,6 +19,12 @@ class AuthMiddleware {
 	
 		try {
 			jwt.verify(token, Env.JWT_SECRET as jwt.Secret);
+			const decoded = jwt.decode(token);
+			if (typeof decoded === "object" && decoded !== null && "name" in decoded) {
+				req.uid = decoded.uid;
+			} else {
+				return res.status(401).json({ error: "Invalid token" });
+			}
 			next();
 		} catch (error) {
 			if (error instanceof jwt.TokenExpiredError) {

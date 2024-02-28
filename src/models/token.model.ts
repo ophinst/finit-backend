@@ -18,7 +18,8 @@ Token.init({
 		references: {
 			model: User,
 			key: "uid",
-		}
+		},
+		allowNull:false,
 	},
 	token: {
 		type: DataTypes.STRING,       

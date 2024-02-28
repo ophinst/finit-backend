@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { FoundItem, LostItem } from "../models/item.model";
 import { User } from "../models/user.model";
-import * as jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { Storage } from "@google-cloud/storage";
 import { Env } from "../config/env-loader";
@@ -29,12 +28,6 @@ class ItemController {
 				return res.status(400).json({ 
 					error: "Please provide all required fields" 
 				});
-			}
-
-			const token = req.cookies.token;
-			const decoded = jwt.decode(token);
-			if (typeof decoded === "object" && decoded !== null && "name" in decoded) {
-				req.uid = decoded.uid;
 			}
 
 			const id = nanoid(10);
@@ -179,18 +172,6 @@ class ItemController {
 		const bucket = storage.bucket(Env.GCP_BUCKET_NAME);
 	
 		try {
-			const token = req.cookies.token;
-			if (!token) {
-				return res.status(401).json({ error: "Token not provided" });
-			}
-	
-			const decoded = jwt.decode(token);
-			if (typeof decoded === "object" && decoded !== null && "name" in decoded) {
-				req.uid = decoded.uid;
-			} else {
-				return res.status(401).json({ error: "Invalid token" });
-			}
-
 			console.log("File attached to the request:", req.file); // Log the file object
 	
 			if (!req.file) {
