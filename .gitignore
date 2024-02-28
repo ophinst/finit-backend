@@ -20,3 +20,6 @@ tsconfig.tsbuildinfo
 # npm package files
 npm-debug.log
 
+#db-migrations
+migrations/
+config.json
