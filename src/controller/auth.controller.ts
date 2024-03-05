@@ -48,8 +48,7 @@ class AuthController {
 			const salt = await bcrypt.genSalt();
 			const hashedPassword = await bcrypt.hash(password, salt);
 
-			const id = nanoid(10);
-			const uid = "fin-" + id;
+			const uid = "fin-" + nanoid(10);
 
 			await User.create({
 				uid: uid,
@@ -57,12 +56,30 @@ class AuthController {
 				email: email,
 				password: hashedPassword,
 			});
+
+			const token = jwt.sign({ uid, name }, Env.JWT_SECRET, {
+				expiresIn: "24h"
+			});
+
+			const refreshToken = jwt.sign({ uid, name }, Env.JWT_SECRET, {
+				expiresIn: "7d"
+			});
+
+			const tokenId = "tkn-" + nanoid(10);
+
+			await Token.create({
+				tokenId: tokenId,
+				uid: uid,
+				token: refreshToken,
+			});
+
 			return res.status(201).json({
 				success: true,
 				message: "User registered successfully",
 				data: {
 					name,
-					email
+					email,
+					token
 				}
 			});
 			
@@ -78,6 +95,12 @@ class AuthController {
 	async Login(req: Request, res: Response): Promise<Response> {
 		try {
 			const { email, password } = req.body;
+			if (!email || !password) {
+				res.status(400).json({
+					success: true,
+					error: "Please provide all required fields" 
+				});
+			}
 
 			const user = await User.findOne({ 
 				where: { email },
@@ -109,14 +132,31 @@ class AuthController {
 				expiresIn: "7d"
 			});
 
-			const id = nanoid(10);
-			const tokenId = "tkn-" + id;
+			const tokenId = "tkn-" + nanoid(10);
 
-			await Token.create({
-				tokenId: tokenId,
-				uid: uid,
-				token: refreshToken,
+			const existingToken = await Token.findOne({
+				where: {
+					uid: uid
+				}
 			});
+
+			if (!existingToken) {
+				await Token.create({
+					tokenId: tokenId,
+					uid: uid,
+					token: refreshToken,
+				});
+			} else {
+				await Token.update({
+					tokenId: tokenId,
+					uid: uid,
+					token: refreshToken,
+				}, {
+					where: {
+						uid: uid
+					}
+				});
+			}
 			
 			res.cookie("token", token, {
 				httpOnly: true,

@@ -19,6 +19,7 @@ app.use(cors({
 app.use(morgan("tiny"));
 app.use(cookieParser());
 app.disable("x-powered-by");
+app.use(express.json()); 
 
 app.use(`${globalApiPrefix}/`, 
 	express.Router()

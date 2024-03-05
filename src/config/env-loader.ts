@@ -12,7 +12,8 @@ export const EnvironmentsVariables = () => ({
 	GCP_EMAIL: process.env.GCP_EMAIL,
 	GCP_PROJECT_ID: process.env.GCP_PROJECT_ID,
 	GCP_BUCKET_NAME: process.env.GCP_BUCKET_NAME,
-	GCP_KEY: process.env.GCP_KEY
+	GCP_KEY: process.env.GCP_KEY,
+	NODE_ENV: process.env.NODE_ENV
 });
 
 export const Env = EnvironmentsVariables();

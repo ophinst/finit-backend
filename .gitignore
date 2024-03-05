@@ -1,5 +1,7 @@
+# Misc
 dbdata/
 .env
+docker-compose.yml
 
 # Dependency directories
 node_modules/

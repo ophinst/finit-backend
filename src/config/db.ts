@@ -12,7 +12,9 @@ export const sequelize = new Sequelize({
 
 try {
 	sequelize.authenticate();
-	sequelize.sync().then(() => console.log("Database & tables created!"));
+	if (Env.NODE_ENV === "development") {
+		sequelize.sync().then(() => console.log("Database & tables created!"));
+	}
 } catch (err) {
 	console.error(err);
 }
