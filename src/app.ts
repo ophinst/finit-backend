@@ -2,10 +2,14 @@ import * as cors from "cors";
 import * as express from "express";
 import * as morgan from "morgan";
 import * as cookieParser from "cookie-parser";
+import { Env } from "./config/env-loader";
+import * as http from "http";
+import { SocketIOConfig } from "./socket";
 import AuthRouter from "./routes/auth.router";
 import UserRouter from "./routes/user.router";
 import ItemRouter from "./routes/item.router";
-import { Env } from "./config/env-loader";
+import ChatRouter from "./routes/chat.router";
+import MessageRouter from "./routes/message.router";
 
 const app = express(); 
 
@@ -19,13 +23,14 @@ app.use(cors({
 app.use(morgan("tiny"));
 app.use(cookieParser());
 app.disable("x-powered-by");
-app.use(express.json()); 
 
 app.use(`${globalApiPrefix}/`, 
 	express.Router()
 		.use("/auth", AuthRouter)
 		.use(UserRouter)
 		.use(ItemRouter)
+		.use(ChatRouter)
+		.use(MessageRouter)
 );
 
 app.use("/", (req, res) => {
@@ -33,7 +38,12 @@ app.use("/", (req, res) => {
 	res.send("It's working bruh, but you will find nothing here!");
 });
 
+const server = http.createServer(app);
+
+// Initialize SocketIOConfig after the HTTP server is created
+new SocketIOConfig (server);
+
 const port = Env.PORT;
-app.listen(port, () => {
+server.listen(port, () => {
 	console.log(`Server is running on port ${port}`);
 });

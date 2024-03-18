@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response, NextFunction} from "express";
 import * as multer from "multer";
 
 // Define the type for the Multer request
@@ -7,7 +7,7 @@ interface MulterRequest extends Request {
 }
 
 // Create a Multer instance
-const upload: RequestHandler = multer({
+const upload = multer({
 	storage: multer.memoryStorage(), // Call the function to create memory storage
 	limits: {
 		fileSize:  5 *  1024 *  1024, //  5MB
@@ -16,7 +16,7 @@ const upload: RequestHandler = multer({
 
 class UploadMiddleware {
 	// Define an async function to handle the file upload
-	public async ProcessFiles(req: MulterRequest, res: Response, next: NextFunction): Promise<void> {
+	async ProcessFiles(req: MulterRequest, res: Response, next: NextFunction): Promise<void> {
 		try {
 			// Process the file upload
 			await new Promise<void>((resolve, reject) => {
