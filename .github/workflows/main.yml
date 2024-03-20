@@ -12,7 +12,7 @@ jobs:
     name: Deploy to Cloud Run
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.APPLICATION }}/${{ secrets.APPLICATION }}
+      IMAGE_NAME: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.APPLICATION }}
       
     steps:
       - name: Checkout Repository
@@ -28,7 +28,7 @@ jobs:
           
       - name: Configure Docker Authorization
         run: gcloud auth configure-docker \
-                us-central1-docker.pkg.dev
+                $IMAGE_NAME
 
       - name: Build Docker Image
         run: docker build -t $IMAGE_NAME .
