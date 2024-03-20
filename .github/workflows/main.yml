@@ -27,8 +27,7 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v2'
           
       - name: Configure Docker Authorization
-        run: gcloud auth configure-docker \
-                $IMAGE_NAME
+        run: gcloud auth configure-docker --quiet
 
       - name: Build Docker Image
         run: docker build -t $IMAGE_NAME .
@@ -55,4 +54,3 @@ jobs:
           GCP_BUCKET_NAME: ${{ secrets.GCP_BUCKET_NAME }}
           GCP_EMAIL: ${{ secrets.GCP_EMAIL }}
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      
