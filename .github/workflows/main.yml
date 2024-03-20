@@ -15,26 +15,23 @@ jobs:
       IMAGE_NAME: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.APPLICATION }}/${{ secrets.APPLICATION }}
       
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
       - name: Login to Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
           credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
           
       - name: Configure Docker Authorization
-        run: gcloud auth configure-docker --quiet
-
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+        run: gcloud auth configure-docker \
+                us-central1-docker.pkg.dev
 
       - name: Build Docker Image
         run: docker build -t $IMAGE_NAME .
-
-      - name: Authenticate Docker to Artifact Registry
-        run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
 
       - name: Push Docker Image to Artifact Registry
         run: docker push $IMAGE_NAME
