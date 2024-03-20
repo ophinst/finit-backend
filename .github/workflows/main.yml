@@ -18,6 +18,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Print Service Account Email and Project ID
+        run: |
+          echo "Service Account Email: $(gcloud auth list --format="value(account)")"
+          echo "Project ID: ${{ secrets.GCP_PROJECT_ID }}"
+
       - name: Login to Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
@@ -27,7 +32,7 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v2'
           
       - name: Configure Docker Authorization
-        run: gcloud auth configure-docker --quiet
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
       - name: Build Docker Image
         run: docker build -t $IMAGE_NAME .
