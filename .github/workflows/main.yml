@@ -8,6 +8,7 @@ on:
     branches: [master]
 
 jobs:
+  
   deploy:
     name: Deploy to Cloud Run
     runs-on: ubuntu-latest
