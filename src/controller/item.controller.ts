@@ -4,6 +4,7 @@ import { User } from "../models/user.model";
 import { nanoid } from "nanoid";
 import { Storage } from "@google-cloud/storage";
 import { Env } from "../config/env-loader";
+import { Op } from "sequelize";
 
 FoundItem.belongsTo(User, { foreignKey: "uid", as: "foundOwner" });
 User.hasMany(FoundItem, { foreignKey: "uid", as: "foundItems" });
@@ -30,8 +31,7 @@ class ItemController {
 				});
 			}
 
-			const id = nanoid(10);
-			const foundItemId = "fou-" + id;
+			const foundItemId = "fou-" + nanoid(10);
 
 			const foundItem = await FoundItem.create({
 				foundId: foundItemId,
@@ -60,6 +60,8 @@ class ItemController {
 	async GetFoundItems(req: Request, res :Response) : Promise<Response> {
 		try {
 			const category = req.query.category as string;
+			const page = parseInt(req.query.page as string);
+			const search = req.query.search;
 			
 			const filter: {
 				include: {
@@ -70,6 +72,7 @@ class ItemController {
 				attributes: string[];
 				where?: {
 					category?: string;
+					itemName?;
 				};
 			} = {
 				include: [{
@@ -91,13 +94,40 @@ class ItemController {
 				]
 			};
 	
+			const whereClause = {
+				category,
+				itemName: {
+					[Op.iLike]: `%${search}%`
+				}
+			};
+
 			if (category) {
-				filter.where = {
-					category: category
-				};
+				whereClause.category = category;
+			} else {
+				delete whereClause.category;
 			}
+			
+			if (search) {
+				whereClause.itemName;
+			} else {
+				delete whereClause.itemName;
+			}
+
+			filter.where = whereClause;
+			
+			let offset = 0;
+			if (page) {
+				offset = (page - 1) * 10; 
+			}
+
+			// Combine filter and pagination options into a single options object
+			const options = {
+				...filter,
+				offset: offset,
+				limit: 10 // limit to 10 items per page
+			};
 	
-			const foundItems = await FoundItem.findAll(filter);
+			const foundItems = await FoundItem.findAll(options);
 	
 			if (!foundItems) {
 				return res.status(404).json({
@@ -204,14 +234,13 @@ class ItemController {
 						latitude,
 						longitude,
 					} = req.body;
-	
+
 					if (!itemName || !itemDescription || !lostDate || !lostTime || !category || !latitude || !longitude) {
 						return res.status(400).json({ error: "Please provide all required fields" });
 					}
-	
-					const id = nanoid(10);
-					const lostItemId = "los-" + id;
-	
+
+					const lostItemId = "los-" + nanoid(10);
+
 					const lostItem = await LostItem.create({
 						lostId: lostItemId,
 						uid: req.uid,
@@ -242,6 +271,8 @@ class ItemController {
 	async GetLostItems(req: Request, res :Response) : Promise<Response> {
 		try {
 			const category = req.query.category as string;
+			const page = parseInt(req.query.page as string);
+			const search = req.query.search as string;
             
 			const filter: {
 				include: {
@@ -252,6 +283,7 @@ class ItemController {
 				attributes: string[];
 				where?: {
 					category?: string;
+					itemName?;
 				};
 			} = {
 				include: [{
@@ -274,14 +306,36 @@ class ItemController {
 				filter.where = {
 					category: category
 				};
+			} else if (search) {
+				filter.where = {
+					itemName: {
+						[Op.iLike]: `%${search}%`
+					}
+				};
 			}
 
-			const lostItems = await LostItem.findAll(filter);
+			let offset = 0;
+			
+			if (page) {
+				offset = (page - 1) * 5; 
+			}
+
+			// Combine filter and pagination options into a single options object
+			const options = {
+				...filter,
+				offset: offset,
+				limit: 10 // limit to 10 items per page
+			};
+
+			const lostItems = await LostItem.findAll(options);
+			
 			if (!lostItems) {
 				return res.status(404).json({
 					message: "No items found"
 				});
 			}
+
+
 			return res.status(200).json({
 				message: "Lost items retrieved successfully",
 				data: lostItems.map(item => ({
