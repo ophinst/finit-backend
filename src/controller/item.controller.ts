@@ -31,8 +31,7 @@ class ItemController {
 				});
 			}
 
-			const id = nanoid(10);
-			const foundItemId = "fou-" + id;
+			const foundItemId = "fou-" + nanoid(10);
 
 			const foundItem = await FoundItem.create({
 				foundId: foundItemId,
@@ -235,14 +234,13 @@ class ItemController {
 						latitude,
 						longitude,
 					} = req.body;
-	
+
 					if (!itemName || !itemDescription || !lostDate || !lostTime || !category || !latitude || !longitude) {
 						return res.status(400).json({ error: "Please provide all required fields" });
 					}
-	
-					const id = nanoid(10);
-					const lostItemId = "los-" + id;
-	
+
+					const lostItemId = "los-" + nanoid(10);
+
 					const lostItem = await LostItem.create({
 						lostId: lostItemId,
 						uid: req.uid,
