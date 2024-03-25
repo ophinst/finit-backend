@@ -8,7 +8,7 @@ class User extends Model {
 	public password!: string;
 	public phoneNumber?: string;
 	public image?: string;
-	public balance?: string;
+	public balance?: number;
 	public points?: string;
 }
 
@@ -36,7 +36,7 @@ User.init({
 		type: DataTypes.STRING,
 	},
 	balance: {
-		type: DataTypes.STRING,
+		type: DataTypes.NUMBER,
 	},
 	points: {
 		type: DataTypes.STRING,
