@@ -5,7 +5,9 @@ class UserController {
 	async GetUser(req: Request, res: Response): Promise<Response> {
 		try {
 			const users = await User.findAll({
-				attributes: ["name", "email"]
+				attributes: {
+					exclude: ["password"]
+				}
 			});
 
 			if (!users) {
@@ -28,6 +30,9 @@ class UserController {
 			const user = await User.findOne({
 				where: {
 					uid: uid
+				},
+				attributes: {
+					exclude: ["password"]
 				}
 			});
 
