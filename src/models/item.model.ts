@@ -13,7 +13,9 @@ class FoundItem extends Model {
 	public latitude!: string;
 	public longitude!: string;
 	public locationDetail?: string;
-	public status!: boolean;
+	public completionStatus!: boolean;
+	public lostUserStatus!: boolean;
+	public foundUserStatus!: boolean;
 	public foundOwner!: User;
 }
 
@@ -28,10 +30,10 @@ class LostItem extends Model {
 	public category!: string;
 	public latitude!: string;
 	public longitude!: string;
-	public status!: boolean;
+	public completionStatus!: boolean;
+	public lostUserStatus!: boolean;
+	public foundUserStatus!: boolean;
 	public lostOwner!: User;
-
-
 }
 
 FoundItem.init({
@@ -78,10 +80,18 @@ FoundItem.init({
 	locationDetail: {
 		type: DataTypes.STRING,
 	},
-	status: {
+	completionStatus: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: false
 	},
+	lostUserStatus: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+	},
+	foundUserStatus: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+	}
 }, {
 	sequelize,
 	modelName: "foundItem",
@@ -132,9 +142,17 @@ LostItem.init({
 		type: DataTypes.STRING,
 		allowNull: false
 	},
-	status: {
+	completionStatus: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: false
+	},
+	foundUserStatus: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+	},
+	lostUserStatus: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
 	}
 }, {
 	sequelize,
