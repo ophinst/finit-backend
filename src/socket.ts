@@ -1,5 +1,4 @@
-// socket-io-config.ts
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import * as http from "http";
 
 interface User {
@@ -11,21 +10,27 @@ export class SocketIOConfig {
 	private io: Server;
 	private activeUsers: User[] = [];
 
-	constructor (server: http.Server) {
-		this.io = new Server(server);
+	constructor(server: http.Server) {
+		this.io = new Server(server, {
+			cors: {
+				origin: "*", // Update with your frontend URL
+				credentials: true // Set to true if your requests include credentials
+			}
+		});
+		
 
 		this.initializeEventHandlers();
 	}
 
 	private initializeEventHandlers() {
-		this.io.on("connection", (socket) => {
+		this.io.on("connection", (socket: Socket) => { // Change here to specify Socket type
 			this.handleNewConnection(socket);
 			this.handleDisconnect(socket);
 			this.handleSendMessage(socket);
 		});
 	}
 
-	private handleNewConnection(socket) {
+	private handleNewConnection(socket: Socket) { // Change here to specify Socket type
 		// add new User
 		socket.on("new-user-add", (newUserId: string) => {
 			// if user is not added previously
@@ -38,7 +43,7 @@ export class SocketIOConfig {
 		});
 	}
 
-	private handleDisconnect(socket) {
+	private handleDisconnect(socket: Socket) { // Change here to specify Socket type
 		socket.on("disconnect", () => {
 			// remove user from active users
 			this.activeUsers = this.activeUsers.filter((user) => user.socketId !== socket.id);
@@ -48,7 +53,7 @@ export class SocketIOConfig {
 		});
 	}
 
-	private handleSendMessage(socket) {
+	private handleSendMessage(socket: Socket) { // Change here to specify Socket type
 		// send message to a specific user
 		socket.on("send-message", (data: { receiverId: string; message: string }) => {
 			const { receiverId } = data;
