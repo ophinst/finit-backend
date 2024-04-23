@@ -86,7 +86,7 @@ class MessageController {
 		}
 	}
 
-	static async SendMessageWithImage(req: Request, res: Response, chatId: string, messageId: string, payload?: string) {
+	static async SendMessageWithImage(req: Request, res: Response, chatId: string, messageId: string, payload: string) {
 		const storage = new Storage({
 			projectId: Env.GCP_PROJECT_ID,
 			credentials: JSON.parse(Env.GCP_KEY)
