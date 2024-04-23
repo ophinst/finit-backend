@@ -55,9 +55,15 @@ export class SocketIOConfig {
 
 	private handleSendMessage(socket: Socket) { // Change here to specify Socket type
 		// send message to a specific user
-		socket.on("send-message", (data: { receiverId: string; message: string }) => {
-			const { receiverId } = data;
+		socket.on("send-message", (data: { senderId: string, receiverId: string; message: string, imageUrl: string, latitude: string, longitude: string }) => {
+			const { senderId, receiverId } = data;
 			const user = this.activeUsers.find((user) => user.userId === receiverId);
+
+			if (!senderId || !receiverId ) {
+				console.error("Invalid sender or receiver id:", data);
+				return;
+			}
+
 			console.log("Sending from socket to :", receiverId);
 			console.log("Data: ", data);
 			if (user) {

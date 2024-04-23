@@ -7,6 +7,7 @@ class Message extends Model {
 	public chatId!: string;
 	public senderId!: string;
 	public message!: string;
+	public imageUrl?: string;
 }
 
 Message.init({
@@ -28,7 +29,9 @@ Message.init({
 	},
 	message: {
 		type: DataTypes.STRING,
-		allowNull: false,
+	},
+	imageUrl: {
+		type: DataTypes.STRING,
 	},
 }, {
 	sequelize,
