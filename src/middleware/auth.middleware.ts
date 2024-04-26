@@ -12,7 +12,6 @@ class AuthMiddleware {
 	
 		if (!token) {
 			return res.status(401).json({
-				success: false,
 				message: "Missing Token!"
 			});
 		}
@@ -31,12 +30,10 @@ class AuthMiddleware {
 				tokenMiddleware.RefreshToken(req, res, next, token);
 			} else if (error instanceof jwt.JsonWebTokenError) {
 				return res.status(403).json({
-					success: false,
 					message: "Invalid token!"
 				});
 			} else {
 				return res.status(500).json({
-					success: false,
 					message: "Server error!"
 				});
 			}
@@ -54,7 +51,6 @@ class AuthMiddleware {
 			});
 			if (!user) {
 				return res.status(404).json({
-					success: false,
 					message: "Can't find Email!"
 				});
 			}
@@ -62,7 +58,6 @@ class AuthMiddleware {
 		} catch (err) {
 			console.log(err);
 			return res.status(404).json({
-				success: false,
 				message: err
 			});
 		}

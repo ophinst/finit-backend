@@ -6,10 +6,10 @@ class User extends Model {
 	public name!: string;
 	public email!: string;
 	public password!: string;
-	public phoneNumber?: string;
-	public image?: string;
-	public balance?: number;
-	public points?: string;
+	public phoneNumber: string;
+	public image: string;
+	public balance: number;
+	public points: number;
 }
 
 User.init({
@@ -39,7 +39,7 @@ User.init({
 		type: DataTypes.NUMBER,
 	},
 	points: {
-		type: DataTypes.STRING,
+		type: DataTypes.NUMBER,
 	},
 }, {
 	sequelize,

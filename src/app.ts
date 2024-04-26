@@ -10,6 +10,7 @@ import UserRouter from "./routes/user.router";
 import ItemRouter from "./routes/item.router";
 import ChatRouter from "./routes/chat.router";
 import MessageRouter from "./routes/message.router";
+import RewardRouter from "./routes/reward.router";
 
 const app = express(); 
 
@@ -31,6 +32,7 @@ app.use(`${globalApiPrefix}/`,
 		.use(ItemRouter)
 		.use(ChatRouter)
 		.use(MessageRouter)
+		.use(RewardRouter)
 );
 
 app.use("/", (req, res) => {

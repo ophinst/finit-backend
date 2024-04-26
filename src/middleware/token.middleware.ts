@@ -49,20 +49,17 @@ class TokenMiddleware {
 		} catch (error) {
 			if (error instanceof jwt.TokenExpiredError) {
 				return res.status(401).json({
-					success: false,
 					message: "Your session expired, please relogin!"
 				});
 			
 			} else if (!oldTokenInstance) {
 				return res.status(404).json({
-					success: false,
 					message: "Can't find token, please relogin!"
 				});
 			} 
 			else{
 				console.log(error);
 				return res.status(500).json({
-					success: false,
 					message: "Internal server error!"
 				});
 			}
