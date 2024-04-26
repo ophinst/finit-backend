@@ -89,6 +89,9 @@ class RewardController {
 							uid: req.uid,
 						},
 						transaction: t,
+						attributes:{
+							exclude: ["password"]
+						},
 						include:{
 							model: Reward,
 							as: "voucher",
