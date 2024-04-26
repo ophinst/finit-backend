@@ -389,9 +389,10 @@ class ItemController {
 				});
 			}
 
+			const updatedFoundItem = await FoundItem.findOne({ where: { foundId: foundId }});
 			return res.status(200).json({
 				message: statusMessage,
-				data: foundItem
+				data: updatedFoundItem
 			});
 		} catch (error) {
 			console.error(error);
@@ -439,9 +440,10 @@ class ItemController {
 				});
 			}
 
+			const updatedLostItem = await LostItem.findOne({ where: { lostId: lostId }});
 			return res.status(200).json({
 				message: statusMessage,
-				data: lostItem
+				data: updatedLostItem
 			});
 		} catch (error) {
 			console.error(error);
