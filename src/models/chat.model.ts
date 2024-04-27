@@ -14,6 +14,10 @@ Chat.init({
 	members: {
 		type: DataTypes.ARRAY(DataTypes.STRING),
 	},
+	itemId: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	}
 }, {
 	sequelize,
 	modelName: "chat",

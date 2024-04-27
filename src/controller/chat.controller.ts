@@ -49,14 +49,16 @@ class ChatController {
 	async GetChatById(req: Request, res: Response): Promise<Response> {
 		try {
 			const receiverId = req.params.receiverId;
+			const itemId = req.params.itemId;
 
-			if (!receiverId) {
+			if (!receiverId || !itemId) {
 				return res.status(400).json({ message: "Invalid parameter"});
 			}
 
 			const chat = await Chat.findOne({
 				where: {
-					members: [req.uid, receiverId]
+					members: [req.uid, receiverId],
+					itemId: itemId
 				}
 			});
 
@@ -64,7 +66,8 @@ class ChatController {
 				const chatId = "chat-" + nanoid(10); 
 				const chatRoom = await Chat.create({
 					chatId: chatId,
-					members: [req.uid, receiverId]
+					members: [req.uid, receiverId],
+					itemId: itemId
 				});
 	
 				return res.status(201).json({
