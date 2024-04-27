@@ -9,8 +9,11 @@ ItemRouter.post("/found", AuthMiddleware.VerifyToken, ItemController.CreateFound
 ItemRouter.post("/lost", AuthMiddleware.VerifyToken, UploadMiddleware.ProcessFiles, ItemController.CreateLostItem);
 
 ItemRouter.get("/found", ItemController.GetFoundItems);
-ItemRouter.get("/found/:id", ItemController.GetFoundItemById);
+ItemRouter.get("/found/:foundId", ItemController.GetFoundItemById);
 ItemRouter.get("/lost", ItemController.GetLostItems);
-ItemRouter.get("/lost/:id", ItemController.GetLostItemById);
+ItemRouter.get("/lost/:lostId", ItemController.GetLostItemById);
+
+ItemRouter.patch("/lost/:lostId", AuthMiddleware.VerifyToken, ItemController.FinishLostTransaction);
+ItemRouter.patch("/found/:foundId", AuthMiddleware.VerifyToken, ItemController.FinishFoundTransaction);
 
 export default ItemRouter;

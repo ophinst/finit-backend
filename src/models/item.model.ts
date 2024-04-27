@@ -29,11 +29,11 @@ class LostItem extends Model {
 	public lostTime!: Date;
 	public category!: string;
 	public latitude!: string;
-	public longitude!: string;
 	public completionStatus!: boolean;
 	public lostUserStatus!: boolean;
 	public foundUserStatus!: boolean;
 	public lostOwner!: User;
+	public foundUserId: string;
 }
 
 FoundItem.init({
@@ -153,6 +153,10 @@ LostItem.init({
 	lostUserStatus: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: false,
+	},
+	foundUserId: {
+		type: DataTypes.STRING,
+		allowNull: true,
 	}
 }, {
 	sequelize,

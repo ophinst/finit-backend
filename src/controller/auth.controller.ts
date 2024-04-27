@@ -12,7 +12,6 @@ class AuthController {
 			const { name, email, password, confirmPassword } = req.body;
 			if (!name || !email || !password || !confirmPassword) {
 				res.status(400).json({
-					success: true,
 					error: "Please provide all required fields" 
 				});
 			}
@@ -22,25 +21,21 @@ class AuthController {
 			});
 			if (existUser) {
 				return res.status(400).json({
-					success: false, 
 					message: `User with ${email} already exist` 
 				});
 			}
 			if (!email.includes("@")) {
 				return res.status(400).json({
-					success: false,
 					message: "Email format is invalid!"
 				});
 			}
 			if (password.length < 8) {
 				return res.status(400).json({
-					success: false,
 					message: "Password must be at least 8 characters!"
 				});
 			}
 			if (password !== confirmPassword) {
 				return res.status(403).json({
-					success: false,
 					message: "Password and confirm password don't match!"
 				});
 			}
@@ -74,7 +69,6 @@ class AuthController {
 			});
 
 			return res.status(201).json({
-				success: true,
 				message: "User registered successfully",
 				data: {
 					name,
@@ -86,7 +80,6 @@ class AuthController {
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({
-				success: false,
 				message: "Internal server error"
 			});
 		}
@@ -97,7 +90,6 @@ class AuthController {
 			const { email, password } = req.body;
 			if (!email || !password) {
 				res.status(400).json({
-					success: true,
 					error: "Please provide all required fields" 
 				});
 			}
@@ -108,7 +100,6 @@ class AuthController {
 			
 			if (!user) {
 				return res.status(401).json({
-					success: false,
 					message: "User not registered"
 				});
 			}
@@ -119,7 +110,6 @@ class AuthController {
 			const isMatch = await bcrypt.compare(password, user.password);
 			if (!isMatch) {
 				return res.status(401).json({
-					success: false,
 					message: "Invalid password"
 				});
 			}
@@ -178,7 +168,6 @@ class AuthController {
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({
-				success: false,
 				message: "Internal server error"
 			});
 		}
@@ -205,7 +194,6 @@ class AuthController {
 			
 			if (!user) {
 				return res.status(401).json({
-					success: false,
 					message: "User not found"
 				});
 			}
@@ -219,14 +207,12 @@ class AuthController {
 			res.clearCookie("token");
 			
 			return res.status(200).json({
-				success: true,
 				message: "Logout successful"
 			});
 			
 		} catch (error) {
 			console.log(error);
 			return res.status(500).json({
-				success: false,
 				message: "Internal server error"
 			});
 		}
