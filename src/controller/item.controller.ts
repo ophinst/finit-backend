@@ -6,12 +6,23 @@ import { Storage } from "@google-cloud/storage";
 import { Env } from "../config/env-loader";
 import { Op } from "sequelize";
 import transactionMiddleware from "../middleware/transaction.middleware";
+import { getDistance } from "geolib";
 
 FoundItem.belongsTo(User, { foreignKey: "uid", as: "foundOwner" });
 User.hasMany(FoundItem, { foreignKey: "uid", as: "foundItems" });
 
 LostItem.belongsTo(User, { foreignKey: "uid", as: "lostOwner" });
 User.hasMany(LostItem, { foreignKey: "uid", as: "lostItems" });
+
+// Type guards to check if an item is a FoundItem or LostItem
+function isFoundItem(item: FoundItem | LostItem): item is FoundItem {
+	return (item as FoundItem).foundOwner !== undefined;
+}
+
+function isLostItem(item: FoundItem | LostItem): item is LostItem {
+	return (item as LostItem).lostOwner !== undefined;
+}
+
 class ItemController {
 	async CreateFoundItem(req: Request, res :Response) : Promise<Response> {
 		try {
@@ -445,6 +456,92 @@ class ItemController {
 				message: statusMessage,
 				data: updatedLostItem
 			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Internal server error" });
+		}
+	}
+
+	async GetNearbyItem(req: Request, res: Response): Promise<Response> {
+		const userLat = parseFloat(req.params.userLat);
+		const userLong = parseFloat(req.params.userLong);
+	
+		try {
+			if (!userLat || !userLong) {
+				return res.status(400).json({ message: "Invalid parameter"});
+			}
+	
+			// Define a default radius in meters
+			const defaultRadius = 5000; // 1 kilometers
+	
+			// Query items within the specified radius
+			const foundItems = await FoundItem.findAll({
+				where: {
+					latitude: {
+						[Op.between]: [userLat - defaultRadius, userLat + defaultRadius]
+					},
+					longitude: {
+						[Op.between]: [userLong - defaultRadius, userLong + defaultRadius]
+					}
+				},
+				include: [{
+					model: User,
+					as: "foundOwner",
+					attributes: ["name"]
+				}]
+			});
+	
+			const lostItems = await LostItem.findAll({
+				where: {
+					latitude: {
+						[Op.between]: [userLat - defaultRadius, userLat + defaultRadius]
+					},
+					longitude: {
+						[Op.between]: [userLong - defaultRadius, userLong + defaultRadius]
+					}
+				},
+				include: [{
+					model: User,
+					as: "lostOwner",
+					attributes: ["name"]
+				}]
+			});
+	
+			// Filter items based on the actual distance
+			const nearbyFoundItems = foundItems.filter(item => getDistance({ latitude: userLat, longitude: userLong }, { latitude: item.latitude, longitude: item.longitude }) <= defaultRadius);
+			const nearbyLostItems = lostItems.filter(item => getDistance({ latitude: userLat, longitude: userLong }, { latitude: item.latitude, longitude: item.longitude }) <= defaultRadius);
+			
+			if (!foundItems.length && !lostItems.length) {
+				return res.status(404).json({ message: "No items found" });
+			}
+	
+			// Combine foundItems and lostItems into a single array
+			const combinedItems = [...nearbyFoundItems, ...nearbyLostItems];
+
+			
+	
+			// Use type guards to safely access foundOwner or lostOwner properties
+			const mappedItems = combinedItems.map(item => {
+				if (isFoundItem(item)) {
+					return {
+						...item.get(),
+						type: "Found Item",
+						foundOwner: item.foundOwner.name
+					};
+				} else if (isLostItem(item)) {
+					return {
+						...item.get(),
+						type: "Lost Item",
+						lostOwner: item.lostOwner.name
+					};
+				}
+			});
+	
+			return res.status(200).json({
+				message: "Nearby items retrieved successfully",
+				data: mappedItems
+			});
+	
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ message: "Internal server error" });

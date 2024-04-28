@@ -10,8 +10,8 @@ class FoundItem extends Model {
 	public foundDate!: Date;
 	public foundTime!: Date;
 	public category!: string;
-	public latitude!: string;
-	public longitude!: string;
+	public latitude!: number;
+	public longitude!: number;
 	public locationDetail?: string;
 	public completionStatus!: boolean;
 	public lostUserStatus!: boolean;
@@ -28,7 +28,8 @@ class LostItem extends Model {
 	public lostDate!: Date;
 	public lostTime!: Date;
 	public category!: string;
-	public latitude!: string;
+	public latitude!: number;
+	public longitude!: number;
 	public completionStatus!: boolean;
 	public lostUserStatus!: boolean;
 	public foundUserStatus!: boolean;
@@ -70,11 +71,11 @@ FoundItem.init({
 		allowNull: false
 	},
 	latitude: {
-		type: DataTypes.STRING,
+		type: DataTypes.DOUBLE,
 		allowNull: false
 	},
 	longitude: {
-		type: DataTypes.STRING,
+		type: DataTypes.DOUBLE,
 		allowNull: false
 	},
 	locationDetail: {
@@ -135,11 +136,11 @@ LostItem.init({
 		allowNull: false
 	},
 	latitude: {
-		type: DataTypes.STRING,
+		type: DataTypes.DOUBLE,
 		allowNull: false
 	},
 	longitude: {
-		type: DataTypes.STRING,
+		type: DataTypes.DOUBLE,
 		allowNull: false
 	},
 	completionStatus: {
