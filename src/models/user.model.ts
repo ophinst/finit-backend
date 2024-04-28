@@ -36,10 +36,10 @@ User.init({
 		type: DataTypes.STRING,
 	},
 	balance: {
-		type: DataTypes.NUMBER,
+		type: DataTypes.INTEGER,
 	},
 	points: {
-		type: DataTypes.NUMBER,
+		type: DataTypes.INTEGER,
 	},
 }, {
 	sequelize,

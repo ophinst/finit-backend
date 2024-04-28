@@ -9,6 +9,7 @@ class Reward extends Model {
 	public rewardCode!: string[];
 	public rewardDescription!: string;
 	public rewardExpiration!: Date;
+	public rewardImage!: string;
 }
 
 Reward.init({
@@ -34,6 +35,10 @@ Reward.init({
 	},
 	rewardExpiration: {
 		type: DataTypes.DATEONLY,
+		allowNull: false,
+	},
+	rewardImage: {
+		type: DataTypes.STRING,
 		allowNull: false,
 	}
 },

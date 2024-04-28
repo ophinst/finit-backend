@@ -4,6 +4,8 @@ import { User } from "../models/user.model";
 import { sequelize } from "../config/db";
 import { UserReward } from "../models/user-reward.model";
 import { nanoid } from "nanoid";
+import { Storage } from "@google-cloud/storage";
+import { Env } from "../config/env-loader";
 
 User.belongsToMany(Reward, { through: "user-reward", as: "voucher", foreignKey: "uid", });
 Reward.belongsToMany(User, { through: "user-reward", as: "owner", foreignKey: "rewardId", });
@@ -148,22 +150,58 @@ class RewardController {
 		try {
 			const { rewardName, rewardStock, rewardPrice, rewardDescription, rewardExpiration } = req.body;
 
-			if (!rewardName || !rewardStock || !rewardPrice || !rewardDescription || !rewardExpiration) {
-				return res.status(400).json({message: "Please provide all required fields"});
-			}
+			// if (!rewardName || !rewardStock || !rewardPrice || !rewardDescription || !rewardExpiration) {
+			// 	return res.status(400).json({message: "Please provide all required fields"});
+			// }
 
-			const reward = await Reward.create({
-				rewardId: "rew-" + nanoid(10),
-				rewardName: rewardName,
-				rewardStock: rewardStock,
-				rewardPrice: rewardPrice,
-				rewardDescription: rewardDescription,
-				rewardExpiration: rewardExpiration
+			const storage = new Storage({
+				projectId: Env.GCP_PROJECT_ID,
+				credentials: JSON.parse(Env.GCP_KEY)
+			});
+			const bucket = storage.bucket(Env.GCP_BUCKET_NAME);
+		
+			console.log("File attached to the request:", req.file); // Log the file object
+		
+			if (!req.file) {
+				return res.status(400).json({ error: "Please provide an image" });
+			}
+		
+			const folder = "rewardImage";
+			const filename = `${folder}/${req.file.originalname}`;
+			const blob = bucket.file(filename);
+			const publicUrl = new URL(`https://storage.googleapis.com/${bucket.name}/${blob.name}`);
+			const stream = blob.createWriteStream();
+		
+			// Pipe the file data to the stream
+			stream.end(req.file.buffer);
+		
+			stream.on("error", (error: Error) => {
+				console.error("Stream Error:", error);
+				return res.status(500).json({ message: "Failed to process image. Try again later" });
 			});
 
-			return res.status(201).json({
-				message: "Reward created successfully",
-				data: reward
+			stream.on("finish", async () => {
+				try {
+					await blob.makePublic();
+
+					const reward = await Reward.create({
+						rewardId: "rew-" + nanoid(10),
+						rewardName: rewardName,
+						rewardStock: rewardStock,
+						rewardPrice: rewardPrice,
+						rewardDescription: rewardDescription,
+						rewardExpiration: rewardExpiration,
+						rewardImage: publicUrl.toString()
+					});
+
+					return res.status(201).json({
+						message: "Reward created successfully",
+						data: reward
+					});
+				} catch (error) {
+					console.error(error);
+					return res.status(500).json({ message: "Internal server error" });
+				}
 			});
 		} catch (error) {
 			console.error(error);
