@@ -1,6 +1,8 @@
+// import sequelize library and database configuration
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/db";
 
+// define user reward properties to indicate to Typescript that they are part of User Reward model
 class UserReward extends Model {
 	public id!: number;
 	public uid!: string;
@@ -8,6 +10,7 @@ class UserReward extends Model {
 	public rewardCode!: string[];
 }
 
+// initialize user reward model configuration
 UserReward.init({
 	id: {
 		type: DataTypes.INTEGER,

@@ -158,17 +158,7 @@ class ItemController {
 					model: User,
 					as: "foundOwner",
 					attributes: ["name"]
-				}],
-				attributes: [
-					"foundId",
-					"itemName",
-					"itemDescription",
-					"foundDate",
-					"foundTime",
-					"latitude",
-					"longitude",
-					"locationDetail"
-				]
+				}]
 			});
 
 			if (!foundItem) {

@@ -1,7 +1,10 @@
+// import sequelize library and database configuration
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/db";
+// import user model to define foreign key constraints
 import { User } from "./user.model";
 
+// define found item properties to indicate to Typescript that they are part of Found Item model
 class FoundItem extends Model {
 	public foundId!: string;
 	public uid!: string;
@@ -19,6 +22,7 @@ class FoundItem extends Model {
 	public foundOwner!: User;
 }
 
+// define lost item properties to indicate to Typescript that they are part of Lost Item model
 class LostItem extends Model {
 	public lostId!: string;
 	public uid!: string;
@@ -37,6 +41,7 @@ class LostItem extends Model {
 	public foundUserId: string;
 }
 
+// initialize found and lost item model configuration
 FoundItem.init({
 	foundId: {
 		type: DataTypes.STRING,
@@ -44,7 +49,7 @@ FoundItem.init({
 	},
 	uid: {
 		type: DataTypes.STRING,
-		references: {
+		references: { // reference to the uid field in User model
 			model: User,
 			key: "uid",
 		},
@@ -105,7 +110,7 @@ LostItem.init({
 	},
 	uid: {
 		type: DataTypes.STRING,
-		references: {
+		references: { // reference to the uid field in User model
 			model: User,
 			key: "uid",
 		},

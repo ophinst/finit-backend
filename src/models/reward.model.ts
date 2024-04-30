@@ -1,6 +1,8 @@
+// import sequelize library and database configuration
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/db";
 
+// define message properties to indicate to Typescript that they are part of Reward model
 class Reward extends Model {
 	public rewardId!: string;
 	public rewardName!: string;
@@ -12,6 +14,7 @@ class Reward extends Model {
 	public rewardImage!: string;
 }
 
+// initialize reward model configuration
 Reward.init({
 	rewardId: {
 		type: DataTypes.STRING,

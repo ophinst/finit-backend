@@ -1,8 +1,10 @@
+// import sequelize library and database configuration
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/db";
 
+// define user properties to indicate to Typescript that they are part of User model
 class User extends Model {
-	public uid!: string; // Note that the `null assertion` `!` is required
+	public uid!: string;
 	public name!: string;
 	public email!: string;
 	public password!: string;
@@ -12,6 +14,7 @@ class User extends Model {
 	public points: number;
 }
 
+// initialize user model configuration
 User.init({
 	uid: {
 		type: DataTypes.STRING,
