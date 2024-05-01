@@ -20,6 +20,7 @@ class FoundItem extends Model {
 	public lostUserStatus!: boolean;
 	public foundUserStatus!: boolean;
 	public foundOwner!: User;
+	public createdAt!: Date;
 }
 
 // define lost item properties to indicate to Typescript that they are part of Lost Item model
@@ -39,6 +40,7 @@ class LostItem extends Model {
 	public foundUserStatus!: boolean;
 	public lostOwner!: User;
 	public foundUserId: string;
+	public createdAt: Date;
 }
 
 // initialize found and lost item model configuration
@@ -147,6 +149,9 @@ LostItem.init({
 	longitude: {
 		type: DataTypes.DOUBLE,
 		allowNull: false
+	},
+	locationDetail: {
+		type: DataTypes.STRING,
 	},
 	completionStatus: {
 		type: DataTypes.BOOLEAN,

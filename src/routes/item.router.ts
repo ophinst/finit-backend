@@ -13,6 +13,7 @@ ItemRouter.get("/found/:foundId", ItemController.GetFoundItemById);
 ItemRouter.get("/lost", ItemController.GetLostItems);
 ItemRouter.get("/lost/:lostId", ItemController.GetLostItemById);
 ItemRouter.get("/nearby/:userLat/:userLong", ItemController.GetNearbyItem);
+ItemRouter.get("/recent", AuthMiddleware.VerifyToken, ItemController.GetRecentActivity);
 
 ItemRouter.patch("/lost/:lostId", AuthMiddleware.VerifyToken, ItemController.FinishLostTransaction);
 ItemRouter.patch("/found/:foundId", AuthMiddleware.VerifyToken, ItemController.FinishFoundTransaction);

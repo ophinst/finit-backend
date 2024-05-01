@@ -221,6 +221,7 @@ class ItemController {
 						category,
 						latitude,
 						longitude,
+						locationDetail,
 					} = req.body;
 
 					if (!itemName || !itemDescription || !lostDate || !lostTime || !category || !latitude || !longitude) {
@@ -240,6 +241,7 @@ class ItemController {
 						category: category,
 						latitude: latitude,
 						longitude: longitude,
+						locationDetail: locationDetail,
 					});
 					return res.status(201).json({
 						message: "Item created successfully",
@@ -535,6 +537,73 @@ class ItemController {
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ message: "Internal server error" });
+		}
+	}
+
+	async GetRecentActivity(req: Request, res: Response): Promise<Response> {
+		try {
+			const category = req.query.category as string;
+			const search = req.query.search as string;
+			const uid = req.uid as string;
+
+			const filter: {
+				where?: {
+					category?: string;
+					itemName?;
+					uid?: string;
+				}
+			} = {
+				where: {
+					uid: uid
+				}
+			};
+			if (category) {
+				filter.where.category = category;
+			} else {
+				delete filter.where.category;
+			}
+
+			if (search) {
+				filter.where.itemName = {
+					[Op.iLike]: `%${search}%`
+				};
+			} else {
+				delete filter.where.itemName;
+			}
+
+			const userActivity = {
+				... filter,
+				uid: uid
+			};
+
+			const recentFoundItem = await FoundItem.findAll(userActivity);
+			const recentLostItem = await LostItem.findAll(userActivity);
+
+			if (!recentFoundItem && !recentLostItem) {
+				return res.status(404).json({ message: "No items found" });
+			}
+
+			// Combine foundItems and lostItems into a single array and sort them in descending order
+			const userRecentActivity = [...recentFoundItem, ...recentLostItem].sort((a, b) => {
+				const dateA = new Date(a.createdAt);
+				const dateB = new Date(b.createdAt);
+
+				return dateB.getTime() - dateA.getTime();
+			});
+
+			console.log("Recent: " + userRecentActivity);
+			console.log("Found: " + recentFoundItem);
+			console.log("Lost: " + recentLostItem);
+
+			return res.status(200).json({
+				message: "Recent activity retrieved successfully",
+				data: userRecentActivity
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({
+				message: "Internal server error"
+			});
 		}
 	}
 }
