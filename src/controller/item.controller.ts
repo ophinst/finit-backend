@@ -84,6 +84,7 @@ class ItemController {
 				where?: {
 					category?: string;
 					itemName?;
+					completionStatus?: boolean;
 				};
 			} = {
 				include: [{
@@ -97,7 +98,8 @@ class ItemController {
 				category,
 				itemName: {
 					[Op.iLike]: `%${search}%`
-				}
+				},
+				completionStatus: false
 			};
 
 			if (category) {
@@ -273,26 +275,37 @@ class ItemController {
 				where?: {
 					category?: string;
 					itemName?;
+					completionStatus?: boolean;
 				};
 			} = {
 				include: [{
 					model: User,
 					as: "lostOwner",
 					attributes: ["name"]
-				}]
+				}],
+			};
+
+			const whereClause = {
+				category,
+				itemName: {
+					[Op.iLike]: `%${search}%`
+				},
+				completionStatus: false
 			};
 
 			if (category) {
-				filter.where = {
-					category: category
-				};
-			} else if (search) {
-				filter.where = {
-					itemName: {
-						[Op.iLike]: `%${search}%`
-					}
-				};
+				whereClause.category = category;
+			} else {
+				delete whereClause.category;
 			}
+
+			if (search) {
+				whereClause.itemName;
+			} else {
+				delete whereClause.itemName;
+			}
+
+			filter.where = whereClause;
 
 			let offset = 0;
 

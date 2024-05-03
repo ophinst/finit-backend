@@ -88,6 +88,7 @@ class AuthController {
 
 	async Login(req: Request, res: Response): Promise<Response> {
 		try {
+			//validate data from form input
 			const { email, password } = req.body;
 			if (!email || !password) {
 				res.status(400).json({
@@ -108,8 +109,8 @@ class AuthController {
 			const uid = user.uid;
 			const name = user.name;
 
-			const isMatch = await bcrypt.compare(password, user.password);
-			if (!isMatch) {
+			const isValid = await bcrypt.compare(password, user.password);
+			if (!isValid) {
 				return res.status(401).json({
 					message: "Invalid password"
 				});
@@ -149,13 +150,6 @@ class AuthController {
 				});
 			}
 			
-			res.cookie("token", token, {
-				httpOnly: true,
-				sameSite: true,
-				maxAge: 7 * 24 * 60 * 60 * 1000,
-				secure: false
-			});
-
 			return res.status(200).json({
 				success: true,
 				message: "Login successful",
@@ -205,7 +199,6 @@ class AuthController {
 				}
 			});
 			
-			res.clearCookie("token");
 			
 			return res.status(200).json({
 				message: "Logout successful"
