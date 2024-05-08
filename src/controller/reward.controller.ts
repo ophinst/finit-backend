@@ -208,6 +208,36 @@ class RewardController {
 			return res.status(500).json({ message: "Internal server error" });
 		}
 	}
+
+	async GetUserReward(req: Request, res: Response): Promise<Response> {
+		const uid = req.uid;
+
+		try {
+			const userReward = await User.findOne({
+				where: { uid: uid },
+				include: {
+					model: Reward,
+					as: "voucher",
+					through: {
+						as: "ownedRewardCode",
+						attributes: ["rewardCode"]
+					}
+				}
+			});
+
+			if (!userReward) {
+				return res.status(404).json({ message: "User don't have any reward" });
+			}
+
+			return res.status(200).json({
+				message: "User reward fetched successfully",
+				data: userReward
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Internal server error" });
+		}
+	}
 }
 
 export default new RewardController();

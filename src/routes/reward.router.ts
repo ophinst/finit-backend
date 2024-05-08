@@ -6,6 +6,7 @@ import UploadMiddleware from "../middleware/upload.middleware";
 const RewardRouter = express.Router();
 
 RewardRouter.get("/reward", RewardController.GetRewards);
+RewardRouter.get("/reward/user", AuthMiddleware.VerifyToken, RewardController.GetUserReward);
 
 RewardRouter.post("/reward", UploadMiddleware.ProcessFiles, RewardController.CreateRewards);
 
