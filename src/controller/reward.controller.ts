@@ -76,7 +76,7 @@ class RewardController {
 				// If user has already purchased this reward, update the reward code array
 				if (rewardCheck) {
 					// Get the existing array of reward codes and flatten it because API return nested arrays
-					const rewardCodes: string[] = rewardCheck.rewardCode; 
+					const rewardCodes: string[] = rewardCheck.rewardCode.flat(); 
 					rewardCodes.push(newRewardCode);
 					console.log(rewardCodes);
 
