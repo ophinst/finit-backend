@@ -119,7 +119,14 @@ class UserController {
 			stream.on("finish", async () => {
 				await blob.makePublic();
 				await user.update({ image: publicUrl.toString()});
-				const updatedUser = await User.findOne({ where: { uid: uid} });
+
+				const updatedUser = await User.findOne({ 
+					where: { uid: uid},
+					attributes: {
+						exclude: ["password"]
+					}
+				});
+				
 				return res.status(200).json({
 					message: "User profile picture updated successfully",
 					data: updatedUser
