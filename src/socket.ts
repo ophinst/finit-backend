@@ -55,7 +55,7 @@ export class SocketIOConfig {
 
 	private handleSendMessage(socket: Socket) { // Change here to specify Socket type
 		// send message to a specific user
-		socket.on("send-message", (data: { senderId: string, receiverId: string; message: string, imageUrl: string, latitude: string, longitude: string }) => {
+		socket.on("send-message", (data: { chatId: string, senderId: string, receiverId: string; message: string, imageUrl: string, latitude: string, longitude: string }) => {
 			const { senderId, receiverId } = data;
 			const user = this.activeUsers.find((user) => user.userId === receiverId);
 
