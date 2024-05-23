@@ -18,4 +18,6 @@ ItemRouter.get("/recent", AuthMiddleware.VerifyToken, ItemController.GetRecentAc
 ItemRouter.patch("/lost/:lostId", AuthMiddleware.VerifyToken, ItemController.FinishLostTransaction);
 ItemRouter.patch("/found/:foundId", AuthMiddleware.VerifyToken, ItemController.FinishFoundTransaction);
 
+ItemRouter.delete("/recent/:itemId", AuthMiddleware.VerifyToken, ItemController.DeleteItemReport);
+
 export default ItemRouter;
