@@ -477,7 +477,7 @@ class ItemController {
 			}
 	
 			// Define a default radius in meters
-			const defaultRadius = 5000; // 1 kilometers
+			const defaultRadius = 3000;
 	
 			// Query items within the specified radius
 			const foundItems = await FoundItem.findAll({
@@ -523,9 +523,6 @@ class ItemController {
 			// Combine foundItems and lostItems into a single array
 			const combinedItems = [...nearbyFoundItems, ...nearbyLostItems];
 
-			
-	
-			// Use type guards to safely access foundOwner or lostOwner properties
 			const mappedItems = combinedItems.map(item => {
 				if (isFoundItem(item)) {
 					return {
@@ -604,10 +601,6 @@ class ItemController {
 				return dateB.getTime() - dateA.getTime();
 			});
 
-			console.log("Recent: " + userRecentActivity);
-			console.log("Found: " + recentFoundItem);
-			console.log("Lost: " + recentLostItem);
-
 			return res.status(200).json({
 				message: "Recent activity retrieved successfully",
 				data: userRecentActivity
@@ -617,6 +610,44 @@ class ItemController {
 			return res.status(500).json({
 				message: "Internal server error"
 			});
+		}
+	}
+
+	async DeleteItemReport(req: Request, res: Response): Promise<Response> {
+		try {
+			const itemId = req.params.itemId;
+			const uid = req.uid;
+
+			if (!itemId) {
+				return res.status(400).json({ message: "Invalid parameter" });
+			}
+	
+			if (itemId.includes("los")) {
+				const item = await LostItem.findOne({ where: { lostId: itemId } });
+				if (!item) {
+					return res.status(404).json({ message: "Item not found" });
+				}
+				if (item.uid != uid) {
+					return res.status(400).json({ message: "Item not yours" });
+				}
+
+				await item.destroy();
+				return res.status(200).json({ message: "Item report deleted successfully" });
+			} else {
+				const item = await FoundItem.findOne({ where: { foundId: itemId } });
+				if (!item) {
+					return res.status(404).json({ message: "Item not found" });
+				}
+				if (item.uid != uid) {
+					return res.status(400).json({ message: "Item not yours" });
+				}
+
+				await item.destroy();
+				return res.status(200).json({ message: "Item report deleted successfully" });
+			}
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Internal server error" });
 		}
 	}
 }
