@@ -10,5 +10,6 @@ UserRouter.get("/user/:id", UserController.GetUserById);
 
 UserRouter.patch("/user", AuthMiddleware.VerifyToken, UserController.UpdateUserData);
 UserRouter.patch("/user/profile", AuthMiddleware.VerifyToken, UploadMiddleware.ProcessFiles, UserController.UpdateUserProfilePicture);
+UserRouter.patch("/user/idcard", AuthMiddleware.VerifyToken, UploadMiddleware.ProcessFiles, UserController.UploadUserIdCard);
 
 export default UserRouter;

@@ -137,6 +137,57 @@ class UserController {
 			return res.status(500).json({ message: "Internal server error" });
 		}
 	}
+
+	async UploadUserIdCard(req: Request, res: Response): Promise<Response> {
+		const storage = new Storage({
+			projectId: Env.GCP_PROJECT_ID,
+			credentials: JSON.parse(Env.GCP_KEY)
+		});
+		const bucket = storage.bucket(Env.GCP_BUCKET_NAME);
+
+		console.log("File attached to the request:", req.file); // Log the file object
+		try {
+			const uid = req.uid;
+			const user = await User.findOne({ where: { uid: uid} });
+			if (!user) {
+				return res.status(404).json({ message: "User not found" });
+			}
+
+			const folder = "userIdCard";
+			const filename = `${folder}/${req.uid}/${req.file.originalname}`;
+			const blob = bucket.file(filename);
+			const publicUrl = new URL(`https://storage.googleapis.com/${bucket.name}/${blob.name}`);
+			const stream = blob.createWriteStream();
+
+			// Pipe the file data to the stream
+			stream.end(req.file.buffer);
+
+			stream.on("error", (error: Error) => {
+				console.error("Stream Error:", error);
+				return res.status(500).json({ message: "Failed to process image. Try again later" });
+			});
+
+			stream.on("finish", async () => {
+				await blob.makePublic();
+				await user.update({ image: publicUrl.toString()});
+
+				const updatedUser = await User.findOne({ 
+					where: { uid: uid},
+					attributes: {
+						exclude: ["password"]
+					}
+				});
+				
+				return res.status(200).json({
+					message: "User ID card uploaded successfully",
+					data: updatedUser
+				});
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Internal server error" });
+		}
+	}
 }
 
 export default new UserController();
