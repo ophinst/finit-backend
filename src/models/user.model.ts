@@ -11,6 +11,8 @@ class User extends Model {
 	public phoneNumber: string;
 	public image: string;
 	public points: number;
+	public verified!: boolean;
+	public role!: string;
 }
 
 // initialize user model configuration
@@ -40,6 +42,16 @@ User.init({
 	points: {
 		type: DataTypes.INTEGER,
 	},
+	verified: {
+		type: DataTypes.BOOLEAN,
+		allowNull: false,
+		defaultValue: false,
+	},
+	role: {
+		type: DataTypes.ENUM("admin", "user"),
+		allowNull: false,
+		defaultValue: "user",
+	}
 }, {
 	sequelize,
 	modelName: "user",
