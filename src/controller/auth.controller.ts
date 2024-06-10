@@ -7,7 +7,7 @@ import { Env } from "../config/env-loader";
 import { nanoid } from "nanoid";
 
 class AuthController {
-	async Register(req: Request, res: Response): Promise<Response> { 
+	async Register(req: Request, res: Response): Promise<Response> {
 		try {
 			const { name, email, password, confirmPassword } = req.body;
 			if (!name || !email || !password || !confirmPassword) {
@@ -74,7 +74,8 @@ class AuthController {
 					uid,
 					name,
 					email,
-					token
+					token,
+					role: "user"
 				}
 			});
 			
@@ -129,6 +130,9 @@ class AuthController {
 			const existingToken = await Token.findOne({
 				where: {
 					uid: uid
+				},
+				attributes: {
+					exclude: ["password"]
 				}
 			});
 
@@ -157,6 +161,7 @@ class AuthController {
 					uid,
 					name,
 					email,
+					role: user.role,
 					token
 				}
 			});
