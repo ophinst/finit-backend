@@ -6,11 +6,28 @@ import { Env } from "../config/env-loader";
 class UserController {
 	async GetUser(req: Request, res: Response): Promise<Response> {
 		try {
+			const page = parseInt(req.query.page as string);
+
+			if (!page) {
+				return res.status(400).json({ message: "Invalid query param" });
+			}
+
+			let offset = 0;
+			if (page) {
+				offset = (page - 1) * 5;
+			}
+
 			const users = await User.findAll({
 				attributes: {
 					exclude: ["password"]
-				}
+				},
+				offset: offset,
+				limit: 10,
+				order: [
+					["createdAt", "DESC"]
+				]
 			});
+
 
 			if (!users) {
 				return res.status(404).json({ message: "User not found" });
@@ -169,7 +186,7 @@ class UserController {
 
 			stream.on("finish", async () => {
 				await blob.makePublic();
-				await user.update({ image: publicUrl.toString()});
+				await user.update({ idCard: publicUrl.toString()});
 
 				const updatedUser = await User.findOne({ 
 					where: { uid: uid},

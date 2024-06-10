@@ -650,6 +650,48 @@ class ItemController {
 			return res.status(500).json({ message: "Internal server error" });
 		}
 	}
+
+	async GetAllItems(req: Request, res: Response): Promise<Response> {
+		try {
+			const page = parseInt(req.query.page as string);
+
+			if (!page) {
+				return res.status(400).json({ message: "Invalid query param" });
+			}
+
+			let offset = 0;
+			if (page) {
+				offset = (page - 1) * 10;
+			}
+
+			// Combine foundItems and lostItems into a single array and sort them in descending order
+			const foundItems = await FoundItem.findAll();
+			const lostItems = await LostItem.findAll();
+			const allItems = [...foundItems,...lostItems].sort((a, b) => {
+				const dateA = new Date(a.createdAt);
+				const dateB = new Date(b.createdAt);
+			
+				return dateB.getTime() - dateA.getTime();
+			});
+
+			
+			// Slice the array to get items for the current page
+			const paginatedItems = allItems.slice(offset, offset + 10);
+			if (!paginatedItems.length) {
+				return res.status(404).json({ message: "No items found" });
+			}
+			
+			return res.status(200).json({
+				message: "Items retrieved successfully",
+				data: paginatedItems
+			});
+
+			
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Internal server error" });
+		}
+	}
 }
 
 export default new ItemController();

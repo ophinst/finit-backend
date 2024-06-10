@@ -13,6 +13,7 @@ class User extends Model {
 	public points: number;
 	public verified!: boolean;
 	public role!: string;
+	public idCard: string;
 }
 
 // initialize user model configuration
@@ -51,6 +52,9 @@ User.init({
 		type: DataTypes.ENUM("admin", "user"),
 		allowNull: false,
 		defaultValue: "user",
+	},
+	idCard: {
+		type: DataTypes.STRING
 	}
 }, {
 	sequelize,
