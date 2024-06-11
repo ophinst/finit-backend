@@ -108,6 +108,7 @@ class AuthController {
 
 			const uid = user.uid;
 			const name = user.name;
+			const role = user.role;
 
 			const isValid = await bcrypt.compare(password, user.password);
 			if (!isValid) {
@@ -116,11 +117,11 @@ class AuthController {
 				});
 			}
 
-			const token = jwt.sign({ uid, name }, Env.JWT_SECRET, {
+			const token = jwt.sign({ uid, name, role }, Env.JWT_SECRET, {
 				expiresIn: "24h"
 			});
 
-			const refreshToken = jwt.sign({ uid, name }, Env.JWT_SECRET, {
+			const refreshToken = jwt.sign({ uid, name, role }, Env.JWT_SECRET, {
 				expiresIn: "7d"
 			});
 
@@ -157,7 +158,8 @@ class AuthController {
 					uid,
 					name,
 					email,
-					token
+					token,
+					role
 				}
 			});
 		} catch (error) {
