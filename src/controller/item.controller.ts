@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import { Storage } from "@google-cloud/storage";
 import { Env } from "../config/env-loader";
 import { Op } from "sequelize";
-import transactionMiddleware from "../middleware/transaction.middleware";
+import TransactionMiddleware from "../middleware/transaction.middleware";
 import { getDistance } from "geolib";
 
 FoundItem.belongsTo(User, { foreignKey: "uid", as: "foundOwner" });
@@ -393,7 +393,7 @@ class ItemController {
 			const statusMessage = updateStatus === "foundUserStatus" ? "Found user status in transaction updated" : "Lost user status in transaction updated";
 			await FoundItem.update({ [updateStatus]: true }, { where: { foundId: foundId } });
 
-			const transactionStatus = await transactionMiddleware.CheckFoundTransactionStatus(foundId);
+			const transactionStatus = await TransactionMiddleware.CheckFoundTransactionStatus(foundId);
 
 			if (transactionStatus && transactionStatus.foundUserData && transactionStatus.itemData) {
 				return res.status(200).json({
@@ -444,7 +444,7 @@ class ItemController {
 			const statusMessage = updateStatus === "lostUserStatus" ? "Lost user status in transaction updated" : "Found user status in transaction updated";
 			await LostItem.update({ [updateStatus]: true }, { where: { lostId: lostId } });
 
-			const transactionStatus = await transactionMiddleware.CheckLostTransactionStatus(lostId);
+			const transactionStatus = await TransactionMiddleware.CheckLostTransactionStatus(lostId);
 
 			if (transactionStatus && transactionStatus.foundUserData && transactionStatus.itemData) {
 				return res.status(200).json({
