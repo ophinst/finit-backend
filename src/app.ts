@@ -36,8 +36,16 @@ app.use(`${globalApiPrefix}/`,
 );
 
 app.use("/", (req, res) => {
-	console.log("Server is listening");
-	res.send("It's working bruh, but you will find nothing here!");
+	return res.status(200).json({
+		message: "Data retrieved successfully",
+		data: {
+			name: "Maulana Luthfi Nasution",
+			studentId: "001202100065",
+			major: "Informatics",
+			graduate: true,
+			cumlaude: true
+		}
+	});
 });
 
 const server = http.createServer(app);
